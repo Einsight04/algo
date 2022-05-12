@@ -2,10 +2,10 @@ import fs from 'fs';
 import path from 'path';
 import {fileURLToPath} from 'url';
 
-const fsPromises = fs.promises;
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const fsPromises = fs.promises;
 
 // async function clearDirectory(dir: string) {
 //     const files = await fsPromises.readdir(dir);
@@ -102,44 +102,53 @@ function builtInSort(object: any, objectSize: number): void {
 
 
 function linearSearch(xCoordinate: number, yCoordinate: number): void {
-    function matches(j: { objectSize: string | number; }, i: { linearSearchTimeAfterSort: { [x: string]: string; }; }, startTime: number, match: string): void {
+    function matches(sorted: boolean, j: { objectSize: string | number; }, i: { linearSearchTimeAfterSort: { [x: string]: string; }; }, startTime: number, match: string): void {
         const endTime = performance.now()
         i.linearSearchTimeAfterSort[j.objectSize] = `${match} ${endTime - startTime}`;
     }
 
-    function linearSearchSplit(j: { object: any; objectSize: string | number; }, i: { linearSearchTimeAfterSort: { [x: string]: string; }; }, startTime: number): void {
+    function linearSearchSplit(sorted: boolean, j: { object: any; objectSize: string | number; }, i: { linearSearchTimeAfterSort: { [x: string]: string; }; }, startTime: number): void {
         for (let k of j.object) {
             if (k.x === xCoordinate && k.y === yCoordinate) {
                 match = 'Match: ';
-                matches(j, i, startTime, match);
+                matches(sorted, j, i, startTime, match);
                 break;
             } else if (k === j.object[j.object.length - 1]) {
                 match = 'No Match: ';
-                matches(j, i, startTime, match);
+                matches(sorted, j, i, startTime, match);
                 break;
             }
         }
     }
 
     let match: string = '';
+    let startTime: number = 0;
 
     for (let i of algoData) {
-        console.log("test" + i)
-        const startTime = performance.now()
+        startTime = performance.now()
         for (let j of i.sortedData) {
-            linearSearchSplit(j, i, startTime);
+            linearSearchSplit(true, j, i, startTime);
+        }
+
+        startTime = performance.now()
+        for (let j of i.unSortedData) {
+            linearSearchSplit(false, j, i, startTime);
         }
     }
 }
 
 
 function binarySearch(xCoordinate: number, yCoordinate: number): void {
-    function matches(j: { objectSize: string | number; }, i: { binarySearchTimeAfterSort: { [x: string]: string; }; }, startTime: number, match: string): void {
+    function matches(sorted: boolean, j: { objectSize: string | number; }, i: any, startTime: number, match: string): void {
         const endTime = performance.now()
-        i.binarySearchTimeAfterSort[j.objectSize] = `${match} ${endTime - startTime}`;
+        if (sorted) {
+            i.binarySearchTimeAfterSort[j.objectSize] = `${match} ${endTime - startTime}`;
+        } else {
+            i.binarySearchTimeBeforeSort[j.objectSize] = `${match} ${endTime - startTime}`;
+        }
     }
 
-    function binarySearchSplit(j: { object: any; objectSize: string | number; }, i: { binarySearchTimeAfterSort: { [x: string]: string; }; }, startTime: number): void {
+    function binarySearchSplit(sorted: boolean, j: { object: any; objectSize: string | number; }, i: any, startTime: number): void {
         let low = 0;
         let high = j.object.length - 1;
 
@@ -148,12 +157,12 @@ function binarySearch(xCoordinate: number, yCoordinate: number): void {
 
             if (k.x === xCoordinate && k.y === yCoordinate) {
                 match = 'Match: ';
-                matches(j, i, startTime, match);
+                matches(sorted, j, i, startTime, match);
                 break;
             }
             else if (k === j.object[j.object.length - 1]) {
                 match = 'No Match: ';
-                matches(j, i, startTime, match);
+                matches(sorted, j, i, startTime, match);
                 break;
             }
             else if (k.x > xCoordinate) {
@@ -167,11 +176,17 @@ function binarySearch(xCoordinate: number, yCoordinate: number): void {
     }
 
     let match: string = '';
+    let startTime: number;
 
     for (let i of algoData) {
-        const startTime = performance.now()
+        startTime = performance.now()
         for (let j of i.sortedData) {
-            binarySearchSplit(j, i, startTime);
+            binarySearchSplit(true, j, i, startTime);
+        }
+
+        startTime = performance.now()
+        for (let j of i.unSortedData) {
+            binarySearchSplit(false, j, i, startTime);
         }
     }
 }
@@ -181,7 +196,7 @@ for (let i of objectSizes) {
     const coordinates = randomCoordinates(i);
 
     algoData[0].unSortedData.push({
-        objectSize: i,
+        i,
         object: coordinates
     })
 
@@ -195,19 +210,22 @@ for (let i of objectSizes) {
 }
 
 
-for (let i of algoData) {
-    for (let j of i.sortedData) {
-        if (j.objectSize <= 20) {
-            console.log(`Type: ${i.type} | Size: ${j.objectSize}`)
-            console.log(j.object);
-        } else {
-            console.log(`Type: ${i.type} | Size: ${j.objectSize}`)
-            console.log(j.object.slice(0, 20).concat(j.object.slice(j.object.length - 20, j.object.length)));
-        }
-    }
-}
+// for (let i of algoData) {
+//     for (let j of i.sortedData) {
+//         if (j.objectSize <= 20) {
+//             console.log(`Type: ${i.type} | Size: ${j.objectSize}`)
+//             console.log(j.object);
+//         } else {
+//             console.log(`Type: ${i.type} | Size: ${j.objectSize}`)
+//             console.log(j.object.slice(0, 20).concat(j.object.slice(j.object.length - 20, j.object.length)));
+//         }
+//     }
+// }
 
 
 linearSearch(0, 9);
 binarySearch(0, 9);
+
+
+
 console.log(algoData);
