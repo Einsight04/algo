@@ -12,6 +12,8 @@ const fsPromises = fs.promises;
 // variables
 let algoData: any[] = [];
 const objectSizes: number[] = [5, 10, 100, 1000];
+
+
 await clearDirectory(path.join(__dirname, '..', 'algoData'));
 
 
