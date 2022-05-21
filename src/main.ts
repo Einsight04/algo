@@ -15,7 +15,10 @@ const objectSizes: number[] = [5, 10, 100, 1000];
 await clearDirectory(path.join(__dirname, '..', 'algoData'));
 
 
-// clear all files in directory
+/**
+ * Delete all files in directory
+ * @param {string} dir - The directory to clear
+ */
 async function clearDirectory(dir: string) {
     const files = await fsPromises.readdir(dir);
     for (const file of files) {
@@ -24,13 +27,19 @@ async function clearDirectory(dir: string) {
 }
 
 
-// generate random number
+/**
+ * Generates random number
+ * @returns {number} - A random number between 0 and 1000
+ */
 function randomNumber(): number {
     return Math.floor(Math.random() * 1000);
 }
 
 
-// setup algoData format
+/**
+ * Algo data formatting to follow
+ * @returns {object} - An object used to store data.
+ */
 function algoDataSetup() {
     return [
         {
@@ -57,21 +66,30 @@ function algoDataSetup() {
 }
 
 
-// generate random coordinate data
+/**
+ * Generates random coordinate data
+ * @param {number} size - Number of coordinates to generate
+ * @return {array} coordinateData - An array of coordinate objects
+ */
 function randomCoordinates(size: number): object[] {
-    let array = [];
+    let coordinateData = [];
 
     for (let i = 0; i < size; i++) {
-        array.push(
+        coordinateData.push(
             {
                 x: randomNumber(), y: randomNumber()
             }
         )
     }
-    return array;
+    return coordinateData;
 }
 
 
+/**
+ * Sort coordinate data using insertion sort
+ * @param {object} object - Object containing coordinate data
+ * @param {number} objectSize - Coordinate count within object
+ */
 function insertionSort(object: any, objectSize: number): void {
     const startTime = performance.now()
 
@@ -97,6 +115,11 @@ function insertionSort(object: any, objectSize: number): void {
 }
 
 
+/**
+ * Sort coordinate data using binary sort
+ * @param {object} object - Object containing coordinate data
+ * @param {number} objectSize - Coordinate count within object
+ */
 function builtInSort(object: any, objectSize: number): void {
     const startTime = performance.now()
 
@@ -113,8 +136,21 @@ function builtInSort(object: any, objectSize: number): void {
 }
 
 
+/**
+ * Find coordinate match using linear search and evaluate time taken
+ * @param {number} xCoordinate - Object containing coordinate data
+ * @param {number} yCoordinate - Coordinate count within object
+ */
 function linearSearch(xCoordinate: number, yCoordinate: number): void {
-    function matches(sorted: boolean, j: { objectSize: string | number; }, i: any, startTime: number, match: string): void {
+    /**
+     * Update AlgoData with linear search time
+     * @param {boolean} sorted - Whether the data is sorted
+     * @param {number} j - size of object
+     * @param {object} i - insertionSort / builtInSort object data
+     * @param {number} startTime - recorded start time
+     * @param {string} match - if match is found
+     */
+    function matches(sorted: boolean, j: { objectSize: number; }, i: any, startTime: number, match: string): void {
         const endTime = performance.now()
         if (sorted) {
             i.linearSearchTimeAfterSort[j.objectSize] = `${match} ${endTime - startTime}`;
@@ -124,7 +160,15 @@ function linearSearch(xCoordinate: number, yCoordinate: number): void {
 
     }
 
-    function linearSearchSplit(sorted: boolean, j: { object: any; objectSize: string | number; }, i: any, startTime: number): void {
+
+    /**
+     * Find coordinate match using linear search
+     * @param {boolean} sorted - Whether the data is sorted
+     * @param {number} j - size of object
+     * @param {object} i - insertionSort / builtInSort object data
+     * @param {number} startTime - recorded start time
+     */
+    function linearSearchSplit(sorted: boolean, j: { object: any; objectSize: number; }, i: any, startTime: number): void {
         for (let k of j.object) {
             if (k.x === xCoordinate) {
                 match = 'Match: ';
@@ -155,8 +199,21 @@ function linearSearch(xCoordinate: number, yCoordinate: number): void {
 }
 
 
+/**
+ * Find coordinate match using binary search and evaluate time taken
+ * @param {number} xCoordinate - Object containing coordinate data
+ * @param {number} yCoordinate - Coordinate count within object
+ */
 function binarySearch(xCoordinate: number, yCoordinate: number): void {
-    function matches(sorted: any, j: any, i: any, startTime: any, match: any): void {
+    /**
+     * Update AlgoData with binary search time
+     * @param {boolean} sorted - Whether the data is sorted
+     * @param {number} j - size of object
+     * @param {object} i - insertionSort / builtInSort object data
+     * @param {number} startTime - recorded start time
+     * @param {string} match - if match is found
+     */
+    function matches(sorted: any, j: { objectSize:  number; }, i: { binarySearchTimeAfterSort: { [x: string]: string; }; binarySearchTimeBeforeSort: { [x: string]: string; }; }, startTime: number, match: string): void {
         const endTime = performance.now()
         if (sorted) {
             i.binarySearchTimeAfterSort[j.objectSize] = `${match} ${endTime - startTime}`;
@@ -165,7 +222,15 @@ function binarySearch(xCoordinate: number, yCoordinate: number): void {
         }
     }
 
-    function binarySearchSplit(sorted: any, j: any, i: any, startTime: any): void {
+
+    /**
+     * Find coordinate match using binary search
+     * @param {boolean} sorted - Whether the data is sorted
+     * @param {number} j - size of object
+     * @param {object} i - insertionSort / builtInSort object data
+     * @param {number} startTime - recorded start time
+     */
+    function binarySearchSplit(sorted: boolean, j: { object: any[]; objectSize: number; }, i: { binarySearchTimeAfterSort: { [x: string]: string; }; binarySearchTimeBeforeSort: { [x: string]: string; }; }, startTime: number): void {
         let low = 0;
         let high = j.object.length - 1;
 
@@ -196,12 +261,15 @@ function binarySearch(xCoordinate: number, yCoordinate: number): void {
 
         startTime = performance.now()
         for (let j of i.unSortedData) {
-            console.log(j)
             binarySearchSplit(false, j, i, startTime);
         }
     }
 }
 
+
+/**
+ * populate algoData with data
+ */
 function setup(): void {
     for (let i of objectSizes) {
         const coordinates = randomCoordinates(i);
@@ -222,6 +290,10 @@ function setup(): void {
 }
 
 
+/**
+ * Generate random coordinates
+ * @param {number} i - run count
+ */
 async function main(i: number): Promise<void> {
     algoData = algoDataSetup();
     let algoDataFormatted: any = [];
@@ -233,12 +305,17 @@ async function main(i: number): Promise<void> {
     linearSearch(x, y);
     binarySearch(x, y);
 
-    // for (let i of algoData) {
-    //     for (let j of i.sortedData) {
-    //         console.log(`${i.type} | size: ${j.objectSize}`)
-    //         console.log(j.object.slice(0, 20).concat(j.object.slice(-20)));
-    //     }
-    // }
+    for (let i of algoData) {
+        for (let j of i.sortedData) {
+            if (j.objectSize > 40) {
+                console.log(`${i.type} | size: ${j.objectSize}`)
+                console.log(j.object.slice(0, 20).concat(j.object.slice(-20)));
+            } else {
+                console.log(`${i.type} | size: ${j.objectSize}`)
+                console.log(j.object);
+            }
+        }
+    }
 
     for (let i of algoData) {
         algoDataFormatted.push({
