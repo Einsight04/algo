@@ -11,7 +11,7 @@ const fsPromises = fs.promises;
 
 // variables
 let algoData: any[] = [];
-const objectSizes: number[] = [5, 10, 100, 1000];
+const objectSizes: number[] = [5, 10, 100, 1000, 10000, 100000];
 
 
 await clearDirectory(path.join(__dirname, '..', 'algoData'));
@@ -170,16 +170,16 @@ function linearSearch(xCoordinate: number, yCoordinate: number): void {
      * @param {object} i - insertionSort / builtInSort object data
      * @param {number} startTime - recorded start time
      */
-    function linearSearchSplit(sorted: boolean, j: { object: any; objectSize: number; }, i: any, startTime: number): void {
+    function linearSearchSplit(sorted: boolean, j: { object: any; objectSize: number; }, i: any, startTime: number): number | undefined {
         for (let k of j.object) {
             if (k.x === xCoordinate) {
                 match = 'Match: ';
                 matches(sorted, j, i, startTime, match);
-                break;
+                return j.object.indexOf(k)
             } else if (k === j.object[j.object.length - 1]) {
                 match = 'No Match: ';
                 matches(sorted, j, i, startTime, match);
-                break;
+                return -1
             }
         }
     }
@@ -232,7 +232,7 @@ function binarySearch(xCoordinate: number, yCoordinate: number): void {
      * @param {object} i - insertionSort / builtInSort object data
      * @param {number} startTime - recorded start time
      */
-    function binarySearchSplit(sorted: boolean, j: { object: any[]; objectSize: number; }, i: { binarySearchTimeAfterSort: { [x: string]: string; }; binarySearchTimeBeforeSort: { [x: string]: string; }; }, startTime: number): void {
+    function binarySearchSplit(sorted: boolean, j: { object: any[]; objectSize: number; }, i: { binarySearchTimeAfterSort: { [x: string]: string; }; binarySearchTimeBeforeSort: { [x: string]: string; }; }, startTime: number): number {
         let low = 0;
         let high = j.object.length - 1;
 
@@ -241,7 +241,7 @@ function binarySearch(xCoordinate: number, yCoordinate: number): void {
             if (j.object[mid].x === xCoordinate) {
                 match = 'Match: ';
                 matches(sorted, j, i, startTime, match);
-                return;
+                return mid;
             } else if (j.object[mid].x < xCoordinate) {
                 low = mid + 1;
             } else if (j.object[mid].x > xCoordinate) {
@@ -250,6 +250,7 @@ function binarySearch(xCoordinate: number, yCoordinate: number): void {
         }
         match = 'No Match: ';
         matches(sorted, j, i, startTime, match);
+        return -1;
     }
 
     let match: string = '';
