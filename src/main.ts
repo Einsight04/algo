@@ -169,6 +169,7 @@ function linearSearch(xCoordinate: number, yCoordinate: number): void {
      * @param {number} j - size of object
      * @param {object} i - insertionSort / builtInSort object data
      * @param {number} startTime - recorded start time
+     * @returns {number} j.object.indexOf(k) - Index of match if found
      */
     function linearSearchSplit(sorted: boolean, j: { object: any; objectSize: number; }, i: any, startTime: number): number | undefined {
         for (let k of j.object) {
@@ -231,6 +232,7 @@ function binarySearch(xCoordinate: number, yCoordinate: number): void {
      * @param {number} j - size of object
      * @param {object} i - insertionSort / builtInSort object data
      * @param {number} startTime - recorded start time
+     * @returns {number} mid - Index of match if found
      */
     function binarySearchSplit(sorted: boolean, j: { object: any[]; objectSize: number; }, i: { binarySearchTimeAfterSort: { [x: string]: string; }; binarySearchTimeBeforeSort: { [x: string]: string; }; }, startTime: number): number {
         let low = 0;
